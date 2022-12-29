@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,11 +31,13 @@ public class SummaryScoreBoardServiceTest {
         List<Match> matches=List.of(Match.builder().homeTeamName("Test-team").build());
 
         //when
+        when(matchService.findByMatchStatusOrderByTotalScoreAndUpdatedDate()).thenReturn(matches);
 
         List<ScoreBoardResource> scoreBoardResources =
                 summaryScoreBoardService.retrieveSummaryBoardByOrderedTotalScore();
 
         //then
+        verify(matchService).findByMatchStatusOrderByTotalScoreAndUpdatedDate();
         then(scoreBoardResources).hasSize(1);
     }
 }

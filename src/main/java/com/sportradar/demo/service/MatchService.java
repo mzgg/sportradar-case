@@ -34,6 +34,6 @@ public class MatchService {
     }
 
     public List<Match> findByMatchStatusOrderByTotalScoreAndUpdatedDate() {
-        return null;
+        return matchRepository.findByMatchStatusOrderByTotalScoreAndUpdatedDate();
     }
 }

@@ -10,8 +10,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SummaryScoreBoardService {
 
+    private final MatchService matchService;
 
     public List<ScoreBoardResource> retrieveSummaryBoardByOrderedTotalScore() {
-        return List.of(ScoreBoardResource.builder().build());
+        return matchService
+                .findByMatchStatusOrderByTotalScoreAndUpdatedDate().stream()
+                .map(match -> ScoreBoardResource.builder()
+                        .matchName(match.getMatchName())
+                        .awayTeamScore(match.getAwayTeamScore())
+                        .homeTeamScore(match.getHomeTeamScore())
+                        .build())
+                .toList();
     }
 }

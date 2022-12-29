@@ -16,7 +16,7 @@ public class Match {
 
     private String awayTeamName;
 
-    private LocalDateTime matchStartDate;
+    private LocalDateTime startDate;
 
     private String matchStatus;
 

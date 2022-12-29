@@ -8,6 +8,6 @@ import java.util.List;
 @Service
 public class CurrentMatchDataService {
     public List<ScoreBoardResource> retrieveCurrentMatches() {
-        return null;
+        return List.of(ScoreBoardResource.builder().build());
     }
 }

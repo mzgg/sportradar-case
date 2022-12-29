@@ -1,9 +1,13 @@
 package com.sportradar.demo.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "sys_match")
+@SequenceGenerator(name= "sys_match_seq",allocationSize = 1)
 @Builder
 @Getter
 @Setter
@@ -11,6 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Match {
 
+    @Id
+    @GeneratedValue(strategy =GenerationType.SEQUENCE ,generator = "sys_match_seq")
+    private Long id;
 
     private String homeTeamName;
 
@@ -29,6 +36,7 @@ public class Match {
     private LocalDateTime updatedDate;
 
 
+    @Transient
     public String getMatchName() {
         return homeTeamName + " - " + awayTeamName;
     }

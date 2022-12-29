@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,5 +27,9 @@ public class MatchService {
 
         return matchRepository
                 .findByHomeTeamNameAndAwayTeamNameAndStartDate(homeTeamName, awayTeamName, parse);
+    }
+
+    public List<Match> findByMatchStatusIn(List<String> statusList) {
+       return matchRepository.findByMatchStatusIn(statusList);
     }
 }

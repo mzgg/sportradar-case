@@ -28,7 +28,7 @@ public class CurrentMatchDataServiceTest {
     void whenCalledRetrieveCurrentMatches_ItShouldReturnScoreBoardResource() {
         //given
         List<Match> matches=List.of(Match.builder().homeTeamName("Test-team").build());
-        List<String> filters = List.of("GAME_STARTED", "UPDATE_SCORE");
+        List<String> filters = List.of("NOT_STARTED","GAME_STARTED", "UPDATE_SCORE");
 
 
         //when

@@ -1,5 +1,6 @@
 package com.sportradar.demo.service;
 
+import com.sportradar.demo.enums.GameStatusEnum;
 import com.sportradar.demo.model.Match;
 import com.sportradar.demo.resource.GameEventResource;
 import com.sportradar.demo.util.DateUtil;
@@ -17,6 +18,10 @@ public class GameEventService {
 
     private final MatchService matchService;
 
+    private final SummaryScoreBoardService summaryScoreBoardService;
+
+    private final CurrentMatchDataService currentMatchDataService;
+
     public Match createGameEvent(GameEventResource gameEvent) {
         return getMatchDataIfExistInDatabase(gameEvent)
                 .map(match -> updateMatchDataByNewEvent(gameEvent, match))
@@ -31,8 +36,21 @@ public class GameEventService {
         match.setUpdatedDate(LocalDateTime.now());
         match.setUpdatedDate(LocalDateTime.now());
         match = matchService.save(match);
-        log.info("match updated, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
 
+        if (GameStatusEnum.GAME_STARTED.name().equals(gameEvent.getMatchStatus()) ||
+                GameStatusEnum.NOT_STARTED.name().equals(gameEvent.getMatchStatus())){
+            currentMatchDataService.updateAllGamesCache();
+        }
+        if (GameStatusEnum.GAME_FINISHED.name().equals(gameEvent.getMatchStatus())){
+            currentMatchDataService.updateAllGamesCache();
+            summaryScoreBoardService.updateSummaryOfFinishedGameCache();
+        }
+        if (GameStatusEnum.UPDATE_SCORE.name().equals(gameEvent.getMatchStatus())){
+            currentMatchDataService.updateAllGamesCache();
+            summaryScoreBoardService.updateSummaryOfFinishedGameCache();
+        }
+
+        log.info("match updated, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
         return match;
     }
 
@@ -49,6 +67,7 @@ public class GameEventService {
                 .build();
 
         match = matchService.save(match);
+        currentMatchDataService.updateAllGamesCache();
         log.info("new match created, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
         return match;
     }

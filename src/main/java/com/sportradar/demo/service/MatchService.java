@@ -32,4 +32,8 @@ public class MatchService {
     public List<Match> findByMatchStatusIn(List<String> statusList) {
        return matchRepository.findByMatchStatusIn(statusList);
     }
+
+    public List<Match> findByMatchStatusOrderByTotalScoreAndUpdatedDate() {
+        return null;
+    }
 }

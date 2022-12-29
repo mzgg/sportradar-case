@@ -3,14 +3,11 @@ package com.sportradar.demo.service;
 import com.sportradar.demo.model.Match;
 import com.sportradar.demo.resource.GameEventResource;
 
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.swing.text.html.Option;
 
 import java.util.Optional;
 
@@ -33,18 +30,9 @@ public class GameEventServiceTest {
     @Test
     void whenCalledCreateGameEventIfNotExistInDb_ItShouldSaveToDb() {
         //given
-        GameEventResource gameEvent = GameEventResource.builder()
-                .matchDate("1/2/2023 07:00")
-                .matchStatus("NOT_STARTED")
-                .homeTeam("Mexico")
-                .awayTeam("Canada")
-                .build();
+        GameEventResource gameEvent = newMatchEventResource();
 
-      Match match = Match.builder()
-                .matchStatus("NOT_STARTED")
-                .homeTeamName("Mexico")
-                .awayTeamName("Canada")
-                .build();
+      Match match = newMatch();
 
         //when
         when(matchService.findByHomeTeamNameAndAwayTeamNameAndStartDate(any(), any(), any())).thenReturn(Optional.empty());
@@ -61,25 +49,11 @@ public class GameEventServiceTest {
     @Test
     void whenCalledCreateGameEventIfExistInDb_ItShouldUpdateToDb() {
         //given
-        GameEventResource gameEvent = GameEventResource.builder()
-                .matchDate("1/2/2023 07:00")
-                .matchStatus("NOT_STARTED")
-                .homeTeam("Mexico")
-                .awayTeam("Canada")
-                .build();
+        GameEventResource gameEvent = newMatchEventResource();
 
-        Optional<Match> match = Optional.of(Match.builder()
-                .matchStatus("NOT_STARTED")
-                .homeTeamName("Mexico")
-                .awayTeamName("Canada")
-                .build());
+        Optional<Match> match = Optional.of(newMatch());
 
-        Match updatedMatch = Match.builder()
-                .matchStatus("NOT_STARTED")
-                .homeTeamName("Mexico")
-                .awayTeamName("Canada")
-                .build();
-
+        Match updatedMatch = newMatch();
 
         //when
         when(matchService.findByHomeTeamNameAndAwayTeamNameAndStartDate(any(), any(), any())).thenReturn(match);
@@ -91,5 +65,22 @@ public class GameEventServiceTest {
         verify(matchService).findByHomeTeamNameAndAwayTeamNameAndStartDate(any(), any(), any());
         verify(matchService).save(any());
 
+    }
+
+    private GameEventResource newMatchEventResource() {
+        return GameEventResource.builder()
+                .matchDate("1/2/2023 07:00")
+                .matchStatus("NOT_STARTED")
+                .homeTeam("Mexico")
+                .awayTeam("Canada")
+                .build();
+    }
+
+    private Match newMatch() {
+        return Match.builder()
+                .matchStatus("NOT_STARTED")
+                .homeTeamName("Mexico")
+                .awayTeamName("Canada")
+                .build();
     }
 }

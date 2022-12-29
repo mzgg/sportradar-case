@@ -64,6 +64,7 @@ public class MatchServiceTest {
                 .findByHomeTeamNameAndAwayTeamNameAndStartDate(homeTeamName, awayTeamName, startDate);
 
         //then
+        verify(matchRepository).findByHomeTeamNameAndAwayTeamNameAndStartDate(any(),any(), any());
         then(savedMatchMockOptional).isPresent();
     }
 }

@@ -21,7 +21,12 @@ public class GameEventServiceTest {
     @Test
     void whenCalledCreateGameEvent_ItShouldSaveOrUpdateToDb() {
         //given
-        GameEventResource gameEvent = new GameEventResource();
+        GameEventResource gameEvent = GameEventResource.builder()
+                .matchDate("1/2/2023 07:00")
+                .matchStatus("NOT_STARTED")
+                .homeTeam("Mexico")
+                .awayTeam("Canada")
+                .build();
 
         //when
         Match savedMatch = gameEventService.createGameEvent(gameEvent);

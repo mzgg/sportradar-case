@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 public class GameEventService {
 
     public Match createGameEvent(GameEventResource gameEvent) {
-        return null;
+        return Match.builder().matchName(gameEvent.getMatchName()).build();
     }
 }

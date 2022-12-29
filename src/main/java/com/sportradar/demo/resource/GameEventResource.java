@@ -9,5 +9,20 @@ import lombok.*;
 @AllArgsConstructor
 public class GameEventResource {
 
-    private String matchName;
+    private String homeTeam;
+
+    private String awayTeam;
+
+    private String matchDate;
+
+    private String matchStatus;
+
+    private Integer homeTeamScore;
+
+    private Integer awayTeamScore;
+
+
+    public String getMatchName() {
+        return homeTeam + " - " + awayTeam;
+    }
 }

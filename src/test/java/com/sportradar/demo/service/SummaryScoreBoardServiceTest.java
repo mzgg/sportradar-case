@@ -29,13 +29,10 @@ public class SummaryScoreBoardServiceTest {
         //given
         List<Match> matches=List.of(Match.builder().homeTeamName("Test-team").build());
 
-
         //when
-        when(matchService.findByMatchStatusOrderByTotalScoreAndUpdatedDate()).thenReturn(matches);
 
         List<ScoreBoardResource> scoreBoardResources =
                 summaryScoreBoardService.retrieveSummaryBoardByOrderedTotalScore();
-
 
         //then
         then(scoreBoardResources).hasSize(1);

@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -47,6 +48,10 @@ public class GameEventServiceTest {
 
         //then
         then(savedMatch.getMatchName()).isEqualTo(gameEvent.getMatchName());
+        verify(matchService).findByHomeTeamNameAndAwayTeamNameAndStartDate(any(), any(), any());
+        verify(matchService).save(any());
+
+
 
     }
 }

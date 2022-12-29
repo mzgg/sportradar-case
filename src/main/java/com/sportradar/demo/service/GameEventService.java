@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 public class GameEventService {
 
     public Match createGameEvent(GameEventResource gameEvent) {
-        return Match.builder().matchName(gameEvent.getMatchName()).build();
+        return Match.builder()
+                .homeTeamName(gameEvent.getHomeTeam())
+                .awayTeamName(gameEvent.getAwayTeam())
+                .build();
     }
 }

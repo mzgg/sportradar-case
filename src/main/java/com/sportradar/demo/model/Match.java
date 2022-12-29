@@ -2,6 +2,8 @@ package com.sportradar.demo.model;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -9,5 +11,25 @@ import lombok.*;
 @AllArgsConstructor
 public class Match {
 
-    private String matchName;
+
+    private String homeTeamName;
+
+    private String awayTeamName;
+
+    private LocalDateTime matchStartDate;
+
+    private String matchStatus;
+
+    private Integer homeTeamScore;
+
+    private Integer awayTeamScore;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updatedDate;
+
+
+    public String getMatchName() {
+        return homeTeamName + " - " + awayTeamName;
+    }
 }

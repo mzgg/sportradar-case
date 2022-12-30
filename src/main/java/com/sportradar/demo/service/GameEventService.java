@@ -4,24 +4,28 @@ import com.sportradar.demo.enums.GameStatusEnum;
 import com.sportradar.demo.model.Match;
 import com.sportradar.demo.resource.GameEventResource;
 import com.sportradar.demo.util.DateUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class GameEventService {
 
     private final MatchService matchService;
 
     private final ApplicationContext context;
 
-    public Match createGameEvent(GameEventResource gameEvent) {
+    public Match createGameEvent(@Valid GameEventResource gameEvent) {
         return getMatchDataIfExistInDatabase(gameEvent)
                 .map(match1 -> updateMatchDataByNewEvent(gameEvent, match1))
                 .orElseGet(() -> createNewMatchObject(gameEvent));

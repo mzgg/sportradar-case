@@ -6,6 +6,7 @@ import com.sportradar.demo.resource.GameEventResource;
 import com.sportradar.demo.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,15 +19,12 @@ public class GameEventService {
 
     private final MatchService matchService;
 
-    private final SummaryScoreBoardService summaryScoreBoardService;
-
-    private final CurrentMatchDataService currentMatchDataService;
+    private final ApplicationContext context;
 
     public Match createGameEvent(GameEventResource gameEvent) {
         return getMatchDataIfExistInDatabase(gameEvent)
-                .map(match -> updateMatchDataByNewEvent(gameEvent, match))
+                .map(match1 -> updateMatchDataByNewEvent(gameEvent, match1))
                 .orElseGet(() -> createNewMatchObject(gameEvent));
-
     }
 
     private Match updateMatchDataByNewEvent(GameEventResource gameEvent, Match match) {
@@ -34,29 +32,23 @@ public class GameEventService {
         match.setHomeTeamScore(gameEvent.getHomeTeamScore());
         match.setAwayTeamScore(gameEvent.getAwayTeamScore());
         match.setUpdatedDate(LocalDateTime.now());
-        match.setUpdatedDate(LocalDateTime.now());
         match = matchService.save(match);
-
-        if (GameStatusEnum.GAME_STARTED.name().equals(gameEvent.getMatchStatus()) ||
-                GameStatusEnum.NOT_STARTED.name().equals(gameEvent.getMatchStatus())){
-            currentMatchDataService.updateAllGamesCache();
-        }
-        if (GameStatusEnum.GAME_FINISHED.name().equals(gameEvent.getMatchStatus())){
-            currentMatchDataService.updateAllGamesCache();
-            summaryScoreBoardService.updateSummaryOfFinishedGameCache();
-        }
-        if (GameStatusEnum.UPDATE_SCORE.name().equals(gameEvent.getMatchStatus())){
-            currentMatchDataService.updateAllGamesCache();
-            summaryScoreBoardService.updateSummaryOfFinishedGameCache();
-        }
-
+        executeActionByEventStatus(gameEvent);
         log.info("match updated, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
         return match;
     }
 
 
     private Match createNewMatchObject(GameEventResource gameEvent) {
-        Match match = Match.builder()
+        Match match = newMatchObjectByIncomingGameEvent(gameEvent);
+        match = matchService.save(match);
+        executeActionByEventStatus(gameEvent);
+        log.info("new match created, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
+        return match;
+    }
+
+    private Match newMatchObjectByIncomingGameEvent(GameEventResource gameEvent) {
+        return Match.builder()
                 .homeTeamName(gameEvent.getHomeTeam())
                 .awayTeamName(gameEvent.getAwayTeam())
                 .awayTeamScore(gameEvent.getAwayTeamScore())
@@ -65,11 +57,11 @@ public class GameEventService {
                 .startDate(DateUtil.toLocalDateFromString(gameEvent.getMatchDate()))
                 .createdDate(LocalDateTime.now())
                 .build();
+    }
 
-        match = matchService.save(match);
-        currentMatchDataService.updateAllGamesCache();
-        log.info("new match created, matchName:{}, status:{}", match.getMatchName(), match.getMatchStatus());
-        return match;
+    private void executeActionByEventStatus(GameEventResource gameEvent) {
+        GameStatusEnum gameStatusEnum = GameStatusEnum.getStatusEnumByStringValue(gameEvent.getMatchStatus());
+        context.getBean(gameStatusEnum.getAClass()).changeDataAction(gameEvent);
     }
 
     private Optional<Match> getMatchDataIfExistInDatabase(GameEventResource gameEvent) {
